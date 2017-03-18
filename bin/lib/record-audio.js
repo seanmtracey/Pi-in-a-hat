@@ -25,5 +25,5 @@ function isRecording(){
 module.exports = {
 	start : startRecording,
 	stop : stopRecording,
-	isRecording : checkIfRecordingIsHappening
+	isRecording : isRecording
 }
