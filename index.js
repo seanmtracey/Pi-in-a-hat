@@ -86,7 +86,10 @@ app.get('/stop', (req, res) => {
 
 	if(camera !== undefined){
 		camera.stop();
-		res.end();
+		res.json({
+			status : 'ok',
+			message : 'camera stopped'
+		});
 	} else {
 		res.status(422);
 		res.json({
