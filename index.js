@@ -1,6 +1,7 @@
 const RaspiCam = require('raspicam');
-const shortID = require('shortid').generate;
 const diskspace = require('diskspace');
+
+const getNextVideoNumber = require('./bin/lib/video-order');
 
 const express = require('express');
 const app = express();
@@ -11,6 +12,8 @@ app.use(express.static('public'))
 // ffmpeg -i %f -c:v libx264 -c:a copy myvideo.mp4
 
 let camera = undefined;
+const videoOutputDirectory = `${__dirname}/video`;
+const audioOutputDirectory = `${__dirname}/audio`;
 
 app.get('/start', (req, res) => {
 
@@ -20,14 +23,13 @@ app.get('/start', (req, res) => {
 
 		camera = new RaspiCam({
 			mode : 'video',
-			output : `${__dirname}/video/${shortID()}`,
+			output : `${videoOutputDirectory}/${getNextVideoNumber()}`,
 			timeout : 0,
 			verbose : true,
 			width : 1920,
 			height : 1080
 		});
 
-		//listen for the 'start' event triggered when the start method has been successfully initiated
 		camera.on('start', () => {
 			console.log('Camera is recording...');
 			res.json({
@@ -103,6 +105,4 @@ app.get('/status', (req, res) => {
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
-
-
 });
