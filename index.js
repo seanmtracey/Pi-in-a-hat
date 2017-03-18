@@ -1,6 +1,7 @@
 const RaspiCam = require('raspicam');
-const shortID = require('shortid').generate;
 const diskspace = require('diskspace');
+
+const getNextVideoNumber = require('./bin/lib/video-order');
 
 const express = require('express');
 const app = express();
@@ -11,6 +12,8 @@ app.use(express.static('public'))
 // ffmpeg -i %f -c:v libx264 -c:a copy myvideo.mp4
 
 let camera = undefined;
+const videoOutputDirectory = `${__dirname}/video`;
+const audioOutputDirectory = `${__dirname}/audio`;
 
 app.get('/start', (req, res) => {
 
@@ -18,50 +21,62 @@ app.get('/start', (req, res) => {
 		
 		console.log(`'camera' is undefined. Assigning now...`);
 
-		camera = new RaspiCam({
-			mode : 'video',
-			output : `${__dirname}/video/${shortID()}`,
-			timeout : 0,
-			verbose : true,
-			width : 1920,
-			height : 1080
-		});
+		getNextVideoNumber(videoOutputDirectory)
+			.then(v => {
+				
+				camera = new RaspiCam({
+					mode : 'video',
+					output : `${videoOutputDirectory}/${v}`,
+					timeout : 0,
+					verbose : true,
+					width : 1920,
+					height : 1080
+				});
 
-		//listen for the 'start' event triggered when the start method has been successfully initiated
-		camera.on('start', () => {
-			console.log('Camera is recording...');
-			res.json({
-				status : 'ok',
-				message : 'camera started'
-			});
-		});
+				camera.on('start', () => {
+					console.log('Camera is recording...');
+					res.json({
+						status : 'ok',
+						message : 'camera started'
+					});
+				});
 
-		//listen for the 'read' event triggered when each new photo/video is saved
-		camera.on('read', function(err, timestamp, filename){ 
-			if(err){
-				console.error('An error occurred', err);
-			} else {
-				console.log('Video saved', timestamp, filename);
-			}
-		});
+				//listen for the 'read' event triggered when each new photo/video is saved
+				camera.on('read', function(err, timestamp, filename){ 
+					if(err){
+						console.error('An error occurred', err);
+					} else {
+						console.log('Video saved', timestamp, filename);
+					}
+				});
 
-		//listen for the 'stop' event triggered when the stop method was called
-		camera.on('stop', function(){
-			console.log('Video recording was stopped');
-			if(camera){
-				camera = undefined;
-			}
-		});
+				//listen for the 'stop' event triggered when the stop method was called
+				camera.on('stop', function(){
+					console.log('Video recording was stopped');
+					if(camera){
+						camera = undefined;
+					}
+				});
 
-		//listen for the process to exit when the timeout has been reached
-		camera.on('exit', function(){
-			console.log('Timeout reached');
-			if(camera){
-				camera = undefined;
-			}
-		});
+				//listen for the process to exit when the timeout has been reached
+				camera.on('exit', function(){
+					console.log('Timeout reached');
+					if(camera){
+						camera = undefined;
+					}
+				});
 
-		camera.start();
+				camera.start();
+
+			})
+			.catch(err => {
+				res.status(500);
+				res.json({
+					status : 'err',
+					data : err
+				});
+			})
+		;
 
 	}
 	
@@ -103,6 +118,4 @@ app.get('/status', (req, res) => {
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
-
-
 });
