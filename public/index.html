@@ -62,7 +62,7 @@
 
 			startBtn.addEventListener('click', function(){
 
-				fetch('/start')
+				fetch('/start', {credentials: 'same-origin'})
 					.then(res => {
 						if(res.status !== 200){
 							throw res;
@@ -84,7 +84,7 @@
 
 			stopBtn.addEventListener('click', function(){
 
-				fetch('/stop')
+				fetch('/stop', {credentials: 'same-origin'})
 					.then(res => {
 						if(res.status !== 200){
 							throw res;
