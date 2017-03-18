@@ -3,7 +3,7 @@ const shortID = require('shortid').generate;
 
 const camera = new RaspiCam({
 	mode : 'video',
-	output : `${__dirname}/${shortID()}`,
+	output : `${__dirname}/video/${shortID()}`,
 	timeout : 0,
 	verbose : true
 });
