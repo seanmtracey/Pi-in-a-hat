@@ -1,0 +1,28 @@
+{
+  "name": "pi-in-a-hat",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seanmtracey/Pi-in-a-hat.git"
+  },
+  "keywords": [
+    "raspi",
+    "camera",
+    "wearable"
+  ],
+  "author": "Sean M. Tracey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/seanmtracey/Pi-in-a-hat/issues"
+  },
+  "homepage": "https://github.com/seanmtracey/Pi-in-a-hat#readme",
+  "dependencies": {
+    "raspicam": "^0.2.13",
+    "shortid": "^2.2.8"
+  }
+}
