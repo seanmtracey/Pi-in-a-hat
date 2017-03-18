@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prestart" : "mkdir -p ./video && mkdir -p ./audio",
-    "start" : " node index.js",
+    "prestart": "mkdir -p ./video && mkdir -p ./audio",
+    "start": " node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +24,8 @@
   },
   "homepage": "https://github.com/seanmtracey/Pi-in-a-hat#readme",
   "dependencies": {
+    "diskspace": "^2.0.0",
+    "express": "^4.15.2",
     "raspicam": "^0.2.13",
     "shortid": "^2.2.8"
   }
