@@ -21,49 +21,62 @@ app.get('/start', (req, res) => {
 		
 		console.log(`'camera' is undefined. Assigning now...`);
 
-		camera = new RaspiCam({
-			mode : 'video',
-			output : `${videoOutputDirectory}/${getNextVideoNumber()}`,
-			timeout : 0,
-			verbose : true,
-			width : 1920,
-			height : 1080
-		});
+		getNextVideoNumber()
+			.then(v => {
 
-		camera.on('start', () => {
-			console.log('Camera is recording...');
-			res.json({
-				status : 'ok',
-				message : 'camera started'
-			});
-		});
+				camera = new RaspiCam({
+					mode : 'video',
+					output : `${videoOutputDirectory}/${v}`,
+					timeout : 0,
+					verbose : true,
+					width : 1920,
+					height : 1080
+				});
 
-		//listen for the 'read' event triggered when each new photo/video is saved
-		camera.on('read', function(err, timestamp, filename){ 
-			if(err){
-				console.error('An error occurred', err);
-			} else {
-				console.log('Video saved', timestamp, filename);
-			}
-		});
+				camera.on('start', () => {
+					console.log('Camera is recording...');
+					res.json({
+						status : 'ok',
+						message : 'camera started'
+					});
+				});
 
-		//listen for the 'stop' event triggered when the stop method was called
-		camera.on('stop', function(){
-			console.log('Video recording was stopped');
-			if(camera){
-				camera = undefined;
-			}
-		});
+				//listen for the 'read' event triggered when each new photo/video is saved
+				camera.on('read', function(err, timestamp, filename){ 
+					if(err){
+						console.error('An error occurred', err);
+					} else {
+						console.log('Video saved', timestamp, filename);
+					}
+				});
 
-		//listen for the process to exit when the timeout has been reached
-		camera.on('exit', function(){
-			console.log('Timeout reached');
-			if(camera){
-				camera = undefined;
-			}
-		});
+				//listen for the 'stop' event triggered when the stop method was called
+				camera.on('stop', function(){
+					console.log('Video recording was stopped');
+					if(camera){
+						camera = undefined;
+					}
+				});
 
-		camera.start();
+				//listen for the process to exit when the timeout has been reached
+				camera.on('exit', function(){
+					console.log('Timeout reached');
+					if(camera){
+						camera = undefined;
+					}
+				});
+
+				camera.start();
+
+			})
+			.catch(err => {
+				res.status(500);
+				res.json({
+					status : 'err',
+					data : err
+				});
+			})
+		;
 
 	}
 	
