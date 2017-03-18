@@ -15,6 +15,8 @@ app.get('/start', (req, res) => {
 
 	if(camera === undefined){
 		
+		console.log(`'camera' is undefined. Assigning now...`);
+
 		camera = new RaspiCam({
 			mode : 'video',
 			output : `${__dirname}/video/${shortID()}`,
@@ -57,6 +59,8 @@ app.get('/start', (req, res) => {
 				camera = undefined;
 			}
 		});
+
+		camera.start();
 
 	}
 	
