@@ -1,5 +1,6 @@
 const RaspiCam = require('raspicam');
 const shortID = require('shortid').generate;
+const diskspace = require('diskspace');
 
 const express = require('express');
 const app = express();
@@ -80,6 +81,25 @@ app.get('/stop', (req, res) => {
 	}
 
 });
+
+app.get('/status', (req, res) => {
+
+	diskspace.check('/', (err, result) => {
+		if(err){
+			res.status(500);
+			res.json({
+				status : 'err',
+				err
+			});
+		} else {
+			res.json({
+				status : 'ok',
+				data : result
+			})
+		}
+	});
+
+});	
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
