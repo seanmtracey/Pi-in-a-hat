@@ -28,7 +28,7 @@ app.get('/start', (req, res) => {
 		getNextVideoNumber(videoOutputDirectory)
 			.then(v => {
 				
-				recordAudio.start(`${videoOutputDirectory}/${v}.wav`);
+				recordAudio.start(`${audioOutputDirectory}/${v}.wav`);
 
 				camera = new RaspiCam({
 					mode : 'video',
