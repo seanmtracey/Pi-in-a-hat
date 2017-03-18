@@ -1,14 +1,111 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>Pi in a hat</title>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=yes" />
 	</head>
+
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+		}
+
+		html {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
+			width: 100%;
+			height: auto;
+			display: flex;
+			justify-content: center;
+			font-family: sans-serif;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		button{
+			width: 90%;
+			max-width: 300px;
+			text-align: center;
+			border: 1px solid black;
+			border-radius: 3px;
+			margin-bottom: 1em;
+			font-size: 20px;
+			padding: 10px;
+		}
+
+	</style>
 
 	<body>
 
-		<a href="/start">Start</a>
+		<!--<a href="/start">Start</a>
 		<a href="/stop">Stop</a>
-		<a href="/status">Status</a>
+		<a href="/status">Status</a>-->
+
+		<h1>HatCam</h1>
+
+		<button id="start">Start</button>
+		<button id="stop">Stop</button>
+		
+		<h3>Camera Status</h3>
+		<p id='status'>The camera is...</p>
+
+		<script>
+
+			const startBtn = document.querySelector('#start');
+			const stopBtn = document.querySelector('#stop');			
+
+			const status = document.querySelector('p#status');
+
+			startBtn.addEventListener('click', function(){
+
+				fetch('/start')
+					.then(res => {
+						if(res.status !== 200){
+							throw res;
+						} else {
+							return res.json();
+						}
+					})
+					.then(data => {
+						console.log('Data:', data);
+						status.textContent = 'Camera started';
+					})
+					.catch(err => {
+						console.log(err);
+						status.textContent = 'Could not start camera.' + JSON.stringify(err);
+					})
+				;
+
+			}, false);
+
+			stopBtn.addEventListener('click', function(){
+
+				fetch('/stop')
+					.then(res => {
+						if(res.status !== 200){
+							throw res;
+						} else {
+							return res.json();
+						}
+					})
+					.then(data => {
+						console.log('Data:', data);
+						status.textContent = 'Camera stopped';
+						
+					})
+					.catch(err => {
+						console.log(err);
+						status.textContent = 'Could not stop camera.' + JSON.stringify(err);
+					})
+				;
+
+			}, false);
+
+		</script>
 
 	</body>
 
