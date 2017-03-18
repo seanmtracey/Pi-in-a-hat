@@ -3,9 +3,13 @@ const diskspace = require('diskspace');
 
 const recordAudio = require('./bin/lib/record-audio');
 const getNextVideoNumber = require('./bin/lib/video-order');
+var basicAuth = require('./bin/lib/check-creds');
 
 const express = require('express');
 const app = express();
+
+ 
+app.use(basicAuth);
 
 app.use(express.static('public'))
 
