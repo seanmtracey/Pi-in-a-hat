@@ -11,7 +11,7 @@ module.exports = function(directory){
 			} else {
 
 				if(files.length === 0){
-					return 0;
+					resolve(0);
 				} else {
 
 					let highestNumber = 0;
@@ -24,7 +24,7 @@ module.exports = function(directory){
 
 					});
 
-					return highestNumber + 1;
+					return resolve(highestNumber + 1);
 
 				}
 
