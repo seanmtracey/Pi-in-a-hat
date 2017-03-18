@@ -1,6 +1,7 @@
 const RaspiCam = require('raspicam');
 const diskspace = require('diskspace');
 
+const recordAudio = require('./bin/lib/record-audio');
 const getNextVideoNumber = require('./bin/lib/video-order');
 
 const express = require('express');
@@ -10,6 +11,9 @@ app.use(express.static('public'))
 
 // Wrap camera output in MP4 container
 // ffmpeg -i %f -c:v libx264 -c:a copy myvideo.mp4
+
+// Record audio
+// arecord -D plughw:1 -f cd ./name.wav
 
 let camera = undefined;
 const videoOutputDirectory = `${__dirname}/video`;
@@ -24,6 +28,8 @@ app.get('/start', (req, res) => {
 		getNextVideoNumber(videoOutputDirectory)
 			.then(v => {
 				
+				recordAudio.start(`${videoOutputDirectory}/${v}.wav`);
+
 				camera = new RaspiCam({
 					mode : 'video',
 					output : `${videoOutputDirectory}/${v}`,
@@ -41,7 +47,6 @@ app.get('/start', (req, res) => {
 					});
 				});
 
-				//listen for the 'read' event triggered when each new photo/video is saved
 				camera.on('read', function(err, timestamp, filename){ 
 					if(err){
 						console.error('An error occurred', err);
@@ -50,17 +55,17 @@ app.get('/start', (req, res) => {
 					}
 				});
 
-				//listen for the 'stop' event triggered when the stop method was called
 				camera.on('stop', function(){
 					console.log('Video recording was stopped');
+					recordAudio.stop();
 					if(camera){
 						camera = undefined;
 					}
 				});
 
-				//listen for the process to exit when the timeout has been reached
 				camera.on('exit', function(){
 					console.log('Timeout reached');
+					recordAudio.stop();
 					if(camera){
 						camera = undefined;
 					}
