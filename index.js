@@ -21,9 +21,9 @@ app.get('/start', (req, res) => {
 		
 		console.log(`'camera' is undefined. Assigning now...`);
 
-		getNextVideoNumber()
+		getNextVideoNumber(videoOutputDirectory)
 			.then(v => {
-
+				
 				camera = new RaspiCam({
 					mode : 'video',
 					output : `${videoOutputDirectory}/${v}`,
