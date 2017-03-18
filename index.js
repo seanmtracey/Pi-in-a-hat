@@ -4,6 +4,8 @@ const shortID = require('shortid').generate;
 const express = require('express');
 const app = express();
 
+app.use(express.static('public'))
+
 // Wrap camera output in MP4 container
 // ffmpeg -i %f -c:v libx264 -c:a copy myvideo.mp4
 
