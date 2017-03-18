@@ -6,7 +6,8 @@ const camera = new RaspiCam({
 	output : `${__dirname}/video/${shortID()}`,
 	timeout : 0,
 	verbose : true,
-	framerate : 60
+	width : 1920,
+	height : 1080
 });
 
 //to take a snapshot, start a timelapse or video recording
