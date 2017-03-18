@@ -36,7 +36,8 @@ app.get('/start', (req, res) => {
 					timeout : 0,
 					verbose : true,
 					width : 1920,
-					height : 1080
+					height : 1080,
+					nopreview : true
 				});
 
 				camera.on('start', () => {
