@@ -86,9 +86,12 @@ app.get('/stop', (req, res) => {
 
 	if(camera !== undefined){
 		camera.stop();
-		res.end();
+		res.json({
+			status : 'ok',
+			message : 'camera stopped'
+		});
 	} else {
-		res.status(403);
+		res.status(422);
 		res.json({
 			status : 'err',
 			message : 'Camera has not been started'
@@ -97,7 +100,7 @@ app.get('/stop', (req, res) => {
 
 });
 
-app.get('/status', (req, res) => {
+app.get('/disk', (req, res) => {
 
 	diskspace.check('/', (err, result) => {
 		if(err){
@@ -115,6 +118,22 @@ app.get('/status', (req, res) => {
 	});
 
 });	
+
+app.get('/status', (req, res) => {
+
+	if(camera !== undefined){
+		res.json({
+			status : 'ok',
+			camera : 'recording'
+		});
+	} else {
+		res.json({
+			status : 'ok',
+			camera : 'not-recording'
+		});
+	}
+
+});
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
