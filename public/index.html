@@ -37,6 +37,10 @@
 			padding: 10px;
 		}
 
+		#snapshot{
+			display: none;
+		}
+
 	</style>
 
 	<body>
@@ -49,16 +53,23 @@
 
 		<button id="start">Start</button>
 		<button id="stop">Stop</button>
+		<button id="snapshot">Take Still</button>
 		
 		<h3>Camera Status</h3>
 		<p id='status'>The camera is...</p>
 
+		<h3>Camera Storage</h3>
+
+		<p id="storage"></p>
+
 		<script>
 
 			const startBtn = document.querySelector('#start');
-			const stopBtn = document.querySelector('#stop');			
+			const stopBtn = document.querySelector('#stop');
+			const snapshotBtn = document.querySelector('#snapshot');
 
 			const status = document.querySelector('p#status');
+			const storage = document.querySelector('p#storage');
 
 			startBtn.addEventListener('click', function(){
 
@@ -95,7 +106,6 @@
 					.then(data => {
 						console.log('Data:', data);
 						status.textContent = 'Camera stopped';
-						
 					})
 					.catch(err => {
 						console.log(err);
@@ -104,6 +114,58 @@
 				;
 
 			}, false);
+
+			snapshotBtn.addEventListener('click', function(){
+
+				fetch('/snapshot', {credentials: 'same-origin'})
+					.then(res => {
+						if(res.status !== 200){
+							throw res;
+						} else {
+							return res.json();
+						}
+					})
+					.then(data => {
+						console.log('Data:', data);
+						status.innerHTML = 'Snapshot captured: <a href="' + data.image + '">View</a>';
+					})
+					.catch(err => {
+						console.log(err);
+						status.textContent = 'Could not capture still.' + JSON.stringify(err);
+					})
+				;
+
+			}, false);
+
+			function checkStorage(){
+				fetch('/disk', {credentials : 'same-origin'})
+					.then(res => {
+						if(res.status !== 200){
+							throw res;
+						} else {
+							return res.json();
+						}
+					})
+					.then(data => {
+						console.log(data);
+						// storage.textContent = JSON.stringify(data);
+
+						const d = data.data;
+						storage.innerHTML = Object.keys(d).map(key => {
+							return key + ": " + d[key]
+						}).join('<br>');
+
+					})
+					.catch(err => {
+						storage.textContent = 'Could not check storage' + JSON.stringify(err);						
+					})
+				;
+			}
+
+
+
+			checkStorage();
+			setInterval(checkStorage, 15000);
 
 		</script>
 
