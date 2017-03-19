@@ -134,11 +134,25 @@ app.get('/snapshot', (req, res) => {
 			encoding : 'png'
 		});
 
-		camera.on("exited", function(){
-			res.json({
-				status : 'ok',
-				image : `/pictures/${imageID}.png`
-			});
+		camera.on("read", function(err, filename){ 
+			console.log('Read event');
+			camera.stop();
+			camera = undefined;
+		});
+
+		camera.on("exited", function(err, filename){
+			console.log('Exited');
+			if(err){
+				res.status(500);
+				res.json(err);
+			} else {
+				res.json({
+					status : 'ok',
+					image : `/pictures/${imageID}.png`,
+					filename
+				});
+			}
+
 		});
 
 		camera.start();
