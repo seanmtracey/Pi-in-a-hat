@@ -26,9 +26,11 @@
   "dependencies": {
     "basic-auth": "^1.1.0",
     "diskspace": "^2.0.0",
+    "dotenv": "^4.0.0",
     "express": "^4.15.2",
     "express-basic-auth": "^1.0.1",
     "raspicam": "^0.2.13",
-    "shortid": "^2.2.8"
+    "shortid": "^2.2.8",
+    "twilio": "^2.11.1"
   }
 }
