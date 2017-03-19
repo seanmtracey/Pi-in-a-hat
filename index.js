@@ -145,8 +145,6 @@ app.get('/snapshot', (req, res) => {
 
 	}
 
-	res.end();
-
 });
 
 app.get('/disk', (req, res) => {
