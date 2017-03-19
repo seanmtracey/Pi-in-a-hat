@@ -49,6 +49,7 @@
 
 		<button id="start">Start</button>
 		<button id="stop">Stop</button>
+		<button id="snapshot">Take Still</button>
 		
 		<h3>Camera Status</h3>
 		<p id='status'>The camera is...</p>
@@ -60,7 +61,8 @@
 		<script>
 
 			const startBtn = document.querySelector('#start');
-			const stopBtn = document.querySelector('#stop');			
+			const stopBtn = document.querySelector('#stop');
+			const snapshotBtn = document.querySelector('#snapshot');
 
 			const status = document.querySelector('p#status');
 			const storage = document.querySelector('p#storage');
@@ -100,11 +102,32 @@
 					.then(data => {
 						console.log('Data:', data);
 						status.textContent = 'Camera stopped';
-						
 					})
 					.catch(err => {
 						console.log(err);
 						status.textContent = 'Could not stop camera.' + JSON.stringify(err);
+					})
+				;
+
+			}, false);
+
+			snapshotBtn.addEventListener('click', function(){
+
+				fetch('/stop', {credentials: 'same-origin'})
+					.then(res => {
+						if(res.status !== 200){
+							throw res;
+						} else {
+							return res.json();
+						}
+					})
+					.then(data => {
+						console.log('Data:', data);
+						status.innerHTML = 'Snapshot captured: <a href="' + data.image + '">View</a>';
+					})
+					.catch(err => {
+						console.log(err);
+						status.textContent = 'Could not capture still.' + JSON.stringify(err);
 					})
 				;
 

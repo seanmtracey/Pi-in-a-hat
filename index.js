@@ -1,5 +1,6 @@
 require('dotenv').config();
 const RaspiCam = require('raspicam');
+const shortid = require('shortid').generate;
 const diskspace = require('diskspace');
 var twilio = require('twilio');
 
@@ -14,7 +15,8 @@ const app = express();
 var twilioClient = new twilio.RestClient(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
  
 app.use(basicAuth);
-app.use(express.static('public'))
+app.use(express.static('public'));
+app.use(express.static('pictures'));
 
 // Wrap camera output in MP4 container
 // ffmpeg -i %f -c:v libx264 -c:a copy myvideo.mp4
@@ -25,6 +27,7 @@ app.use(express.static('public'))
 let camera = undefined;
 const videoOutputDirectory = `${__dirname}/video`;
 const audioOutputDirectory = `${__dirname}/audio`;
+const picturesOutputDirectory = `${__dirname}/pictures`;
 
 app.get('/start', (req, res) => {
 
@@ -110,6 +113,39 @@ app.get('/stop', (req, res) => {
 			message : 'Camera has not been started'
 		});
 	}
+
+});
+
+app.get('/snapshot', (req, res) => {
+
+	if(camera === undefined){
+
+		const imageID = shortid()
+
+		camera = new RaspiCam({
+			mode : 'photo',
+			output : `${picturesOutputDirectory}/${imageID}.png`,
+			timeout : 0,
+			quality : 100,
+			verbose : true,
+			width : 3280,
+			height : 2464,
+			nopreview : true,
+			encoding : 'png'
+		});
+
+		camera.on("exited", function(){
+			res.json({
+				status : 'ok',
+				image : `/pictures/${imageID}.png`
+			});
+		});
+
+		camera.start();
+
+	}
+
+	res.end();
 
 });
 
