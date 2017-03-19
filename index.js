@@ -1,16 +1,19 @@
+require('dotenv').config();
 const RaspiCam = require('raspicam');
 const diskspace = require('diskspace');
+var twilio = require('twilio');
 
 const recordAudio = require('./bin/lib/record-audio');
 const getNextVideoNumber = require('./bin/lib/video-order');
 var basicAuth = require('./bin/lib/check-creds');
+const localIP = require('./bin/lib/get-ip');
 
 const express = require('express');
 const app = express();
 
+var twilioClient = new twilio.RestClient(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
  
 app.use(basicAuth);
-
 app.use(express.static('public'))
 
 // Wrap camera output in MP4 container
@@ -147,4 +150,15 @@ app.get('/status', (req, res) => {
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
+
+	console.log(localIP());
+
+	twilioClient.messages.create({
+		body: `I think my IP address is one of the following ${localIP().join(', ')}`,
+		to: process.env.MY_NUMBER,  // Text this number
+		from: process.env.MY_TWILIO_NUMBER // From a valid Twilio number
+	}, function(err, message) {
+		console.log(message.sid);
+	});
+
 });
