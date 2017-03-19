@@ -123,45 +123,44 @@ app.get('/snapshot', (req, res) => {
 		const imageID = shortid()
 
 		camera = new RaspiCam({
-			mode : 'photo',
-			output : `${picturesOutputDirectory}/${imageID}.png`,
-			timeout : 100,
-			quality : 80,
-			verbose : true,
-			width : 1640,
-			height : 1232,
-			nopreview : true,
-			encoding : 'png'
+				mode : 'photo',
+				output : `${picturesOutputDirectory}/${imageID}.png`,
+				timeout : 100,
+				quality : 80,
+				verbose : true,
+				width : 1640,
+				height : 1232,
+				nopreview : true,
+				encoding : 'png'
 		});
 
 		camera.on('start', () => {
-			console.log('Camera is recording...');
+				console.log('Camera is recording...');
 		});
 
-		camera.on("read", function(err, filename){ 
-			console.log('Read event');
-			camera.stop();
-			camera = undefined;
+		camera.on("read", function(err, filename){
+				console.log('Read event');
+				//camera.stop();
+				//camera = undefined;
+				if(err){
+					res.status(500);
+					res.json(err);
+				} else {
+					res.json({
+						status : 'ok',
+						image : `/pictures/${imageID}.png`,
+						filename
+					});
+				}
 		});
 
 		camera.on("exited", function(err, filename){
-			console.log('Exited');
-			if(err){
-				res.status(500);
-				res.json(err);
-			} else {
-				res.json({
-					status : 'ok',
-					image : `/pictures/${imageID}.png`,
-					filename
-				});
-			}
-
+				console.log('Exited');
 		});
 
 		camera.start();
 
-	}
+}
 
 });
 
