@@ -125,13 +125,17 @@ app.get('/snapshot', (req, res) => {
 		camera = new RaspiCam({
 			mode : 'photo',
 			output : `${picturesOutputDirectory}/${imageID}.png`,
-			timeout : 0,
-			quality : 100,
+			timeout : 100,
+			quality : 80,
 			verbose : true,
-			width : 3280,
-			height : 2464,
+			width : 1640,
+			height : 1232,
 			nopreview : true,
 			encoding : 'png'
+		});
+
+		camera.on('start', () => {
+			console.log('Camera is recording...');
 		});
 
 		camera.on("read", function(err, filename){ 
