@@ -113,7 +113,7 @@
 
 			snapshotBtn.addEventListener('click', function(){
 
-				fetch('/stop', {credentials: 'same-origin'})
+				fetch('/snapshot', {credentials: 'same-origin'})
 					.then(res => {
 						if(res.status !== 200){
 							throw res;
